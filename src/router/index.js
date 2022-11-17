@@ -1,14 +1,16 @@
-const express = require('express')
+const express = require("express");
 const router = express.Router();
-const productsRouter = require('./products/products.router')
+const productRouter = require("./products/products.router");
+const cartRouter = require("./cart/cart.router");
 
-router.get("/health", async (_req, res) =>{
+router.get("/health", (req, res) => {
     res.status(200).json({
-        success: true,
-        health: "Up",
-        environment: process.env.ENVIRONMENT || 'undifined'
-    })
-})
-.use('/products', productsRouter)
+      success: true,
+      health: "up",
+      enviroment: process.env.ENVIROMENT || "Not found.",
+    });
+  })
+  .use("/products", productRouter)
+  .use("/cart", cartRouter);
 
-module.exports = router
+module.exports = router;

@@ -1,0 +1,18 @@
+[
+  {
+    "products": [
+      {
+        "name": "Cerveza",
+        "description": "Cervezas",
+        "code": "L20",
+        "thumbnaild": "http://d3ugyf2ht6aenh.cloudfront.net/stores/798/865/products/31270646-e55aacf8ff8a8a986016639329846487-640-0.jpg",
+        "price": 1,
+        "stock": 15,
+        "id": 1,
+        "timestamp": "17/11/2022 09:36:08"
+      }
+    ],
+    "id": 2,
+    "timestamp": "17/11/2022 09:54:41"
+  }
+]

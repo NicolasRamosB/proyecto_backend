@@ -1,51 +1,75 @@
+
 const express = require("express");
-const { v4: uuidv4 } = require("uuid");
-const _ = require("lodash");
-
 const router = express.Router();
+const admin = require("../../middlewares/admin");
+const existProduct = require("../../middlewares/existProduct");
+const Container = require("../../../class/Container");
 
-router.post("/", async(req, res, next) => {
+const products = new Container("products");
+
+router.get("/:id?", existProduct(products), async (req, res, next) => {
   try {
-    const { body } = req;
-    if(_.isNil(body))(res.status(400).json({ success: false, message: "REQ ERROR (Body missing)" }))
-    Object.assign(body, {
-      uuid: uuidv4()
-    });
-    res.status(200).json(body);
+    if (req.products) {
+      res.status(200).json({
+        success: true,
+        data: req.products,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        data: await products.getAll(),
+      });
+    }
   } catch (err) {
     next(err);
   }
 });
 
-router.get("/", async(_req, res, next) => {
+
+router.post("/", admin, (req, res, next) => {
   try {
-    res.status(200).json([])
+    products.saveProduct(req.body);
+    res.status(200).json({
+      success: true,
+      data: req.body,
+    });
   } catch (err) {
     next(err);
   }
-})
+});
 
-router.put("/:productUuid ", async(req, res, next) => {
-  try {
-    const { productUuid } = req.params;
-    if(_.isNil(productUuid))(res.status(400).json({ success: false, message: "REQ ERROR" }))
-    res.status(200).send(productUuid)
 
-  } catch (err) {
-    next(err);
+router.put("/:id", [admin, existProduct(products)], async (req, res, next) => {
+    try {
+      if (req.products) {
+        const { id } = req.params;
+        const data = await products.update(id, req.body);
+        res.status(200).json({
+          success: true,
+          data: data,
+        });
+      }
+    } catch (err) {
+      next(err);
+    }
   }
-})
+);
 
-// router.get("/:productUuid ", async (req, res, next) => {
-//   try {
-//     const { productUuid } = req;
-//     if(_.isNil(productUuid)){
-//       res.status(400).json({ success: false, message: "REQ ERROR (Body missing)" })
-//     };
-//     res.status(200).send(productUuid)
-//   } catch (err) {
-//     next(err);
-//   }
-// })
+
+router.delete("/:id", [admin, existProduct(products)], async (req, res, next) => {
+    try {
+      if (req.products) {
+        const { id } = req.params;
+        await products.deleteById(Number(id));
+        res.status(200).json({
+          success: true,
+          message: "Deleted product.",
+        });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 module.exports = router;
